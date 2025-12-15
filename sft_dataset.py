@@ -190,14 +190,17 @@ def main():
     # Example: Get pool data for a specific UID and environment
     # uid_list = [3, 174, 50, 157, 245, 0, 243, 142, 118, 86, 30, 209, 16, 177]
     uid_list = [26, 147, 102, 109, 244, 209, 3, 230, 73, 203, 156]
-    env = "affine:LGC"
+    env = "LGC"
     base_url = None
 
     # Load existing data to track which task_ids we already have
     existing_data = read_jsonl("sft_data.jsonl")
     data_list = []
     
-    env_name = env.split(":")[1].lower()
+    if env == "LGC" or env == "CDE" or env == "MTH" or env == "SCI":
+        env_name = env.lower()
+    else:
+        env_name = env.split(":")[1].lower()
 
     if env_name == "abd-v2":
         env_name = "abd"
