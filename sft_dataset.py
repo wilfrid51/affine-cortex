@@ -215,7 +215,7 @@ def main():
             if task_ids[env_name][data['task_id']] == 1:
                 continue
             task_ids[env_name][data['task_id']] = 1
-            print(f"✅ {env_name} {data['task_id']}")
+            # print(f"✅ {env_name} {data['task_id']}")
             _cnt += 1
             data_list.append(data)  # Keep existing data
 
