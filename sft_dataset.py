@@ -176,7 +176,17 @@ def main():
     print("=" * 60)
     print()
 
-    task_ids = [0] * 30000
+    task_ids = {
+        "ded":[0] * 30000,
+        "abd":[0] * 30000,
+        "alfworld":[0] * 30000,
+        "sciworld":[0] * 30000,
+        "textcraft":[0] * 30000,
+        "webshop":[0] * 30000,
+        "lgc":[0] * 30000,
+        "mth":[0] * 30000,
+        "sci":[0] * 30000,
+    }
     # Example: Get pool data for a specific UID and environment
     uid_list = [3, 174, 50, 157, 245, 0, 243, 142, 118, 86, 30, 209, 16, 177]
     env = "affine:ded-v2"
@@ -186,12 +196,20 @@ def main():
     existing_data = read_jsonl("sft_data.jsonl")
     data_list = []
     
+    env_name = env.split(":")[1]
+
+    if env_name == "abd-v2":
+        env_name = "abd"
+    elif env_name == "ded-v2":
+        env_name = "ded"
+
     _cnt = 0
     for data in existing_data:
         if isinstance(data, dict) and data.get('task_id') is not None:
-            if task_ids[data['task_id']] == 1:
+            if task_ids[env_name][data['task_id']] == 1:
                 continue
-            task_ids[data['task_id']] = 1
+            task_ids[env_name][data['task_id']] = 1
+            # print(data['task_id'])
             _cnt += 1
             data_list.append(data)  # Keep existing data
 
@@ -208,10 +226,10 @@ def main():
             sampled_task_ids = pool_result.get('sampled_task_ids', [])
             # print(f"✅ {len(sampled_task_ids)} & {sampled_task_ids[:10]} tasks sampled")
             for task_id in sampled_task_ids:
-                if task_id < 22858:
-                    continue
+                # if task_id < 22858:
+                    # continue
                 # print(task_id)
-                if task_ids[task_id] == 0:
+                if task_ids[env_name][task_id] == 0:
                     # task_id is currently empty, so we can add it to the list
                     try:
                         result = asyncio.run(get_sample_data(uid, env, task_id, base_url))
@@ -221,7 +239,7 @@ def main():
                     if result:
                         data = preprocess(result)
                         if data['reward'] > 0.95:
-                            task_ids[task_id] = 1
+                            task_ids[env_name][task_id] = 1
                             write_jsonl("sft_data.jsonl", [data])
                             # data_list.append(data)
                             print(f"✅ Sample {task_id} retrieved")
@@ -229,7 +247,7 @@ def main():
                             print(f"❌ Sample {task_id} failed with reward {data['reward']}")
 
     cnt = 0
-    for task_id in task_ids:
+    for task_id in task_ids[env_name]:
         if task_id == 1:
             cnt += 1
     print(f"✅ {cnt} tasks retrieved")
