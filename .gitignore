@@ -146,4 +146,4 @@ cython_debug/
 
 affine/models/
 
-*.jsonl
+sft_data.jsonl
