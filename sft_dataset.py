@@ -202,6 +202,8 @@ def main():
             sampled_task_ids = pool_result.get('sampled_task_ids', [])
             # print(f"✅ {len(sampled_task_ids)} & {sampled_task_ids[:10]} tasks sampled")
             for task_id in sampled_task_ids:
+                if task_id < 20475:
+                    continue
                 # print(task_id)
                 if task_ids[task_id] == 0:
                     # task_id is currently empty, so we can add it to the list
