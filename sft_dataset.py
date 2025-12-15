@@ -186,10 +186,16 @@ def main():
     existing_data = read_jsonl("sft_data.jsonl")
     data_list = []
     
+    _cnt = 0
     for data in existing_data:
         if isinstance(data, dict) and data.get('task_id') is not None:
+            if task_ids[data['task_id']] == 1:
+                continue
             task_ids[data['task_id']] = 1
+            _cnt += 1
             data_list.append(data)  # Keep existing data
+
+    print(f"✅ {_cnt} tasks already retrieved")
 
     for uid in uid_list:
         print(f"Processing UID {uid}...")
@@ -202,7 +208,7 @@ def main():
             sampled_task_ids = pool_result.get('sampled_task_ids', [])
             # print(f"✅ {len(sampled_task_ids)} & {sampled_task_ids[:10]} tasks sampled")
             for task_id in sampled_task_ids:
-                if task_id < 20492:
+                if task_id < 20537:
                     continue
                 # print(task_id)
                 if task_ids[task_id] == 0:
