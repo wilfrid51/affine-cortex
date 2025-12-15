@@ -197,6 +197,7 @@ def main():
         data_list.append(f"{env}!{task_id}")  # Keep existing data
 
     print(f"✅ {env_name} ({env_name}): {_cnt} tasks already retrieved")
+    con_cnt = 0
 
     for uid in uid_list:
         print(f"Processing UID {uid}...")
@@ -218,6 +219,7 @@ def main():
                         result = asyncio.run(get_sample_data(uid, env, task_id, base_url))
                     except Exception as e:
                         print(f"Error retrieving sample: {e}")
+                        con_cnt += 1
                         continue
                     if result:
                         data = preprocess(result)
@@ -227,8 +229,12 @@ def main():
                             writedata("data.txt", f"{env_name} {task_id}")
                             # data_list.append(data)
                             print(f"✅ Sample {task_id} retrieved")
+                            con_cnt = 0
                         else:
                             print(f"❌ Sample {task_id} failed with reward {data['reward']}")
+                            con_cnt += 1
+                            if con_cnt >= 30:
+                                break
 
     cnt = 0
     for task_id in task_ids[env_name]:
