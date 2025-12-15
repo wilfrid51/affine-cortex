@@ -93,7 +93,7 @@ def write_jsonl(path: str, rows: List[Dict[str, Any]]):
     Write a list of dictionaries to a JSONL file.
     """
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-    with open(path, "a", encoding="utf-8") as f:
+    with open(path, "w", encoding="utf-8") as f:
         for r in rows:
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
 
@@ -202,8 +202,6 @@ def main():
             sampled_task_ids = pool_result.get('sampled_task_ids', [])
             # print(f"✅ {len(sampled_task_ids)} & {sampled_task_ids[:10]} tasks sampled")
             for task_id in sampled_task_ids:
-                if task_id < 20492:
-                    continue
                 # print(task_id)
                 if task_ids[task_id] == 0:
                     # task_id is currently empty, so we can add it to the list
@@ -216,8 +214,7 @@ def main():
                         data = preprocess(result)
                         if data['reward'] > 0.95:
                             task_ids[task_id] = 1
-                            write_jsonl("sft_data.jsonl", [data])
-                            # data_list.append(data)
+                            data_list.append(data)
                             print(f"✅ Sample {task_id} retrieved")
                         else:
                             print(f"❌ Sample {task_id} failed with reward {data['reward']}")
@@ -228,7 +225,7 @@ def main():
             cnt += 1
     print(f"✅ {cnt} tasks retrieved")
     if cnt > 0:
-        # write_jsonl("sft_data.jsonl", data_list)
+        write_jsonl("sft_data.jsonl", data_list)
         print(f"✅ Saved {len(data_list)} & {cnt} tasks to sft_data.jsonl")
     else:
         print("❌ No tasks retrieved")
