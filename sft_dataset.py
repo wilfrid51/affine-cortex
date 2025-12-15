@@ -190,7 +190,7 @@ def main():
     # Example: Get pool data for a specific UID and environment
     # uid_list = [3, 174, 50, 157, 245, 0, 243, 142, 118, 86, 30, 209, 16, 177]
     uid_list = [26, 147, 102, 109, 244, 209, 3, 230, 73, 203, 156]
-    env = "affine:ded-v2"
+    env = "affine:abd-v2"
     base_url = None
 
     # Load existing data to track which task_ids we already have
