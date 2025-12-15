@@ -175,7 +175,19 @@ def main():
 
     _cnt = 0
     for data in existing_data:
-        env, task_id = data.split("!")
+        # Handle both "!" and space separators
+        if "!" in data:
+            parts = data.split("!")
+        elif " " in data:
+            parts = data.split(" ", 1)
+        else:
+            # Skip malformed lines
+            continue
+        
+        if len(parts) != 2:
+            continue
+            
+        env, task_id = parts
         if env.lower() != env_name.lower():
             continue
         if task_ids[env][int(task_id)] == 1:
@@ -184,7 +196,7 @@ def main():
         _cnt += 1
         data_list.append(f"{env}!{task_id}")  # Keep existing data
 
-    print(f"✅ {env} ({env}): {_cnt} tasks already retrieved")
+    print(f"✅ {env_name} ({env_name}): {_cnt} tasks already retrieved")
 
     for uid in uid_list:
         print(f"Processing UID {uid}...")
@@ -212,7 +224,7 @@ def main():
                         if data['reward'] > 0.95:
                             task_ids[env_name][task_id] = 1
                             write_jsonl("sft_data.jsonl", [data])
-                            writedata("data.txt", f"{env_name}!{task_id}")
+                            writedata("data.txt", f"{env_name} {task_id}")
                             # data_list.append(data)
                             print(f"✅ Sample {task_id} retrieved")
                         else:
