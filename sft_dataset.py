@@ -188,7 +188,8 @@ def main():
         "sci":[0] * 30000,
     }
     # Example: Get pool data for a specific UID and environment
-    uid_list = [3, 174, 50, 157, 245, 0, 243, 142, 118, 86, 30, 209, 16, 177]
+    # uid_list = [3, 174, 50, 157, 245, 0, 243, 142, 118, 86, 30, 209, 16, 177]
+    uid_list = [26, 147, 102, 109, 244, 209, 3, 230, 73, 203, 156]
     env = "affine:ded-v2"
     base_url = None
 
@@ -226,8 +227,8 @@ def main():
             sampled_task_ids = pool_result.get('sampled_task_ids', [])
             # print(f"✅ {len(sampled_task_ids)} & {sampled_task_ids[:10]} tasks sampled")
             for task_id in sampled_task_ids:
-                if task_id < 23051:
-                    continue
+                # if task_id < 23051:
+                #     continue
                 # print(task_id)
                 if task_ids[env_name][task_id] == 0:
                     # task_id is currently empty, so we can add it to the list
