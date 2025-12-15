@@ -197,7 +197,7 @@ def main():
     existing_data = read_jsonl("sft_data.jsonl")
     data_list = []
     
-    env_name = env.split(":")[1]
+    env_name = env.split(":")[1].lower()
 
     if env_name == "abd-v2":
         env_name = "abd"
