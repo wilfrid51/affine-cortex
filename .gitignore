@@ -145,5 +145,3 @@ dmypy.json
 cython_debug/
 
 affine/models/
-
-sft_data.jsonl
