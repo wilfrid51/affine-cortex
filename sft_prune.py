@@ -95,13 +95,7 @@ def write_jsonl(path: str, rows: List[Dict[str, Any]]):
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         for r in rows:
-            env_name = r.get('env', '')
-            task_id = r.get('task_id', -1)
-            if env_name == '':
-                continue
-            if task_id == -1:
-                continue
-            f.write(f"{env_name} {task_id}\n")
+            f.write(json.dumps(r, ensure_ascii=False) + "\n")
 
 def read_jsonl(path: str) -> List[Dict[str, Any]]:
     """
@@ -230,7 +224,8 @@ def main():
             print(f"✅ Saved {len(data_list)} & {cnt} tasks to sft_data.jsonl")
         else:
             print("❌ No tasks retrieved")
-    write_jsonl("data.txt", data_list)
+    # write_jsonl("data.txt", data_list)
+    write_jsonl("sft_data.jsonl", data_list)
 
 
 if __name__ == "__main__":

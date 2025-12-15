@@ -105,19 +105,56 @@ def writedata(path: str, data: str):
     with open(path, "a", encoding="utf-8") as f:
         f.write(data + "\n")
 
-def read_data(path: str) -> List[str]:
+def read_jsonl(path: str) -> List[Dict[str, Any]]:
     """
-    Read data file and return list of strings.
+    Read JSONL file and return list of dictionaries.
+    Handles both single-line and multi-line JSON objects.
     """
     if not os.path.exists(path):
         return []
+    
     data_list = []
     with open(path, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            data_list.append(line)
+        content = f.read()
+    
+    # Parse JSONL by finding complete JSON objects
+    # Accumulate characters until braces are balanced
+    current_obj = ""
+    brace_count = 0
+    in_string = False
+    escape_next = False
+    
+    for char in content:
+        current_obj += char
+        
+        if escape_next:
+            escape_next = False
+            continue
+        
+        if char == '\\':
+            escape_next = True
+            continue
+        
+        if char == '"' and not escape_next:
+            in_string = not in_string
+            continue
+        
+        if not in_string:
+            if char == '{':
+                brace_count += 1
+            elif char == '}':
+                brace_count -= 1
+                
+                # When braces are balanced, we have a complete JSON object
+                if brace_count == 0 and current_obj.strip():
+                    try:
+                        obj = json.loads(current_obj.strip())
+                        if isinstance(obj, dict):
+                            data_list.append(obj)
+                    except json.JSONDecodeError:
+                        pass  # Skip malformed JSON
+                    current_obj = ""
+    
     return data_list
 
 def preprocess(data: Dict[str, Any]) -> Dict[str, Any]:
@@ -168,33 +205,26 @@ def main():
     base_url = None
 
     # Load existing data to track which task_ids we already have
-    existing_data = read_data("data.txt")
+    existing_data = read_jsonl("sft_data.jsonl")
     data_list = []
     
     env_name = env
 
+    existing_data = read_jsonl("sft_data.jsonl")
+
     _cnt = 0
     for data in existing_data:
-        # Handle both "!" and space separators
-        if "!" in data:
-            parts = data.split("!")
-        elif " " in data:
-            parts = data.split(" ")
-        else:
-            # Skip malformed lines
-            continue
-        
-        if len(parts) != 2:
-            continue
-            
-        env, task_id = parts
-        if env.lower() != env_name.lower():
-            continue
-        if task_ids[env][int(task_id)] == 1:
-            continue
-        task_ids[env][int(task_id)] = 1
-        _cnt += 1
-        data_list.append(f"{env}!{task_id}")  # Keep existing data
+        if isinstance(data, dict) and data.get('task_id') is not None:
+            if data['env'].lower() == env_name.lower():
+                data['env'] = env_name
+            if data['env'] != env_name:
+                continue
+            if task_ids[env_name][data['task_id']] == 1:
+                continue
+            task_ids[env_name][data['task_id']] = 1
+            # print(f"✅ {env_name} {data['task_id']}")
+            _cnt += 1
+            data_list.append(data)  # Keep existing data
 
     print(f"✅ {env_name} ({env_name}): {_cnt} tasks already retrieved")
     con_cnt = 0
@@ -226,7 +256,6 @@ def main():
                         if data['reward'] > 0.95:
                             task_ids[env_name][task_id] = 1
                             write_jsonl("sft_data.jsonl", [data])
-                            writedata("data.txt", f"{env_name} {task_id}")
                             # data_list.append(data)
                             print(f"✅ Sample {task_id} retrieved")
                             con_cnt = 0
