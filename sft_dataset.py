@@ -148,8 +148,8 @@ def main():
     print()
 
     task_ids = {
-        "affine:ABD-V2":[0] * 30000,
-        "affine:DED-V2":[0] * 30000,
+        "affine:abd-v2":[0] * 30000,
+        "affine:ded-v2":[0] * 30000,
         "agentgym:alfworld":[0] * 30000,
         "agentgym:sciworld":[0] * 30000,
         "agentgym:textcraft":[0] * 30000,
@@ -179,7 +179,7 @@ def main():
         if "!" in data:
             parts = data.split("!")
         elif " " in data:
-            parts = data.split(" ", 1)
+            parts = data.split(" ")
         else:
             # Skip malformed lines
             continue
