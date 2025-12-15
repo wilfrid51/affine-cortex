@@ -12,7 +12,7 @@ python3 sft_dataset.py agentgym:textcraft
 python3 sft_dataset.py agentgym:webshop
 
 git add .
-git commit -m "Add new dataset"
+git commit -m "add: dataset"
 git push
 
-sleep 600
+sleep 1200
