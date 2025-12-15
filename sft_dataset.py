@@ -207,10 +207,12 @@ def main():
     _cnt = 0
     for data in existing_data:
         if isinstance(data, dict) and data.get('task_id') is not None:
+            if data['env'] != env_name:
+                continue
             if task_ids[env_name][data['task_id']] == 1:
                 continue
             task_ids[env_name][data['task_id']] = 1
-            # print(data['task_id'])
+            print(f"✅ {env_name} {data['task_id']}")
             _cnt += 1
             data_list.append(data)  # Keep existing data
 
