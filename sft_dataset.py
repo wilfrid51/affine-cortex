@@ -198,7 +198,7 @@ def main():
     }
     # Example: Get pool data for a specific UID and environment
     # uid_list = [3, 174, 50, 157, 245, 0, 243, 142, 118, 86, 30, 209, 16, 177]
-    uid_list = [209, 118, 26, 147, 102, 109, 244, 209, 3, 230, 73, 203, 156]
+    uid_list = [101, 23, 54, 18]
     env = "agentgym:sciworld"
     if sys.argv[1]:
         env = sys.argv[1]

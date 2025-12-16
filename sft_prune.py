@@ -188,10 +188,23 @@ def main():
         "SCI":[0] * 30000,
         "CDE":[0] * 30000,
     }
+    task_appear = {
+        "affine:ded-v2": 0,
+        "affine:abd-v2": 0,
+        "agentgym:alfworld": 0,
+        "agentgym:sciworld": 0,
+        "agentgym:textcraft": 0,
+        "agentgym:webshop": 0,
+        "LGC": 0,
+        "MTH": 0,
+        "SCI": 0,
+        "CDE": 0,
+    }
     # Example: Get pool data for a specific UID and environment
     # uid_list = [3, 174, 50, 157, 245, 0, 243, 142, 118, 86, 30, 209, 16, 177]
     uid_list = [26, 147, 102, 109, 244, 209, 3, 230, 73, 203, 156]
     data_list = []
+    just_data = []
     for env in task_ids:
         print(f"Processing {env}...")
         env_name = env
@@ -211,6 +224,9 @@ def main():
                 task_ids[env_name][data['task_id']] = 1
                 # print(f"✅ {env_name} {data['task_id']}")
                 _cnt += 1
+                if task_appear[env_name] == 0:
+                    task_appear[env_name] = 1
+                    just_data.append(data)
                 data_list.append(data)  # Keep existing data
 
         print(f"✅ {env} ({env_name}): {_cnt} tasks already retrieved")
@@ -226,6 +242,7 @@ def main():
             print("❌ No tasks retrieved")
     # write_jsonl("data.txt", data_list)
     write_jsonl("sft_data.jsonl", data_list)
+    write_jsonl("just.jsonl", just_data)
 
 
 if __name__ == "__main__":
